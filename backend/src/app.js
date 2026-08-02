@@ -1,3 +1,4 @@
+const leaveRoutes = require("./routes/leaveRoutes");
 const gateRoutes = require("./routes/gateRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
 const express = require("express");
@@ -17,4 +18,5 @@ app.get("/",(req,res)=>{
 });
 app.use("/api/visitors", visitorRoutes);
 app.use("/api/gatelogs", gateRoutes);
+app.use("/api/leaves", leaveRoutes);
 module.exports = app;
