@@ -1,3 +1,4 @@
+const gateRoutes = require("./routes/gateRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
 const express = require("express");
 const cors = require("cors");
@@ -15,4 +16,5 @@ app.get("/",(req,res)=>{
     });
 });
 app.use("/api/visitors", visitorRoutes);
+app.use("/api/gatelogs", gateRoutes);
 module.exports = app;
