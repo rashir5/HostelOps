@@ -1,0 +1,96 @@
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+(async()=>{
+  const browser=await chromium.launch({channel:'chrome',headless:true});
+  const context=await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Kolkata',reducedMotion:'reduce'});
+  const page=await context.newPage();
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.clock.install({time:new Date('2026-09-25T12:00:00+05:30')});
+  await page.goto('http://localhost:3000');
+  await page.locator('.hero h1').waitFor();
+  await page.locator('[data-action="explore-role:Warden"]').click();
+  assert.match(await page.locator('#role-story').innerText(),/Act with confidence/);
+  fs.mkdirSync('screenshots',{recursive:true});
+  await page.screenshot({path:'screenshots/landing-blue.png',fullPage:true});
+  await page.goto('http://localhost:3000/#demo/Student/Dashboard');
+  await page.getByRole('heading',{name:'Quick Pass',exact:true}).waitFor();
+  await page.screenshot({path:'screenshots/student-blue.png',fullPage:true});
+  await page.locator('[data-action="quick-pass"]').first().click();
+  await page.getByRole('button',{name:'Generate demo QR'}).click();
+  assert.equal(await page.locator('.qr-image svg').count(),1);
+  const decoded = await page.evaluate(async()=>{
+    if(!('BarcodeDetector' in window))return null;
+    const svg=document.querySelector('.qr-image svg');
+    const image=new Image();
+    const markup=new XMLSerializer().serializeToString(svg).replace('<svg ','<svg width="512" height="512" ');
+    const url=URL.createObjectURL(new Blob([markup],{type:'image/svg+xml'}));
+    image.src=url;await image.decode();
+    const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+    canvas.getContext('2d').drawImage(image,0,0,512,512);
+    const codes=await new BarcodeDetector({formats:['qr_code']}).detect(canvas);
+    URL.revokeObjectURL(url);
+    return codes.length?JSON.parse(codes[0].rawValue):null;
+  });
+  if(decoded){assert.equal(decoded.demo,true);assert.equal(decoded.movement,'Exit');}
+  await page.screenshot({path:'screenshots/quick-qr.png'});
+  await page.clock.fastForward(600001);
+  assert.equal(await page.locator('.qr-image svg').count(),1); // Expiry icon replaces the QR SVG.
+  assert.match(await page.locator('.qr-image').innerText(),/QR expired/);
+  await page.getByRole('button',{name:'Close dialog'}).click();
+  await page.clock.setSystemTime(new Date('2026-09-25T22:00:00+05:30'));
+  await page.locator('[data-action="quick-pass"]').first().click();
+  assert.equal(await page.locator('#generate-quick').isDisabled(),true);
+  await page.getByRole('button',{name:'Close dialog'}).click();
+  await page.locator('[data-action="long-pass"]').first().click();
+  await page.getByLabel('Reason for leave').fill('Family visit test');
+  await page.getByLabel('Destination').fill('Home');
+  await page.getByLabel('Contact number during leave').fill('9000000000');
+  assert.match(await page.locator('#long-pass-clock').innerText(),/Asia\/Calcutta|Asia\/Kolkata/);
+  assert.ok(await page.getByLabel('Departure',{exact:true}).inputValue(),'future departure is suggested');
+  await page.getByLabel('Departure',{exact:true}).fill('2026-09-25T21:00');
+  await page.getByLabel('Expected return',{exact:true}).fill('2026-09-27T18:00');
+  await page.getByRole('button',{name:'Send Long Pass request'}).click();
+  assert.match(await page.locator('#long-pass-error').innerText(),/Departure must be later than now/);
+  assert.equal(await page.getByLabel('Departure',{exact:true}).getAttribute('aria-invalid'),'true');
+  await page.getByLabel('Departure',{exact:true}).fill('2026-09-26T09:00');
+  await page.getByLabel('Expected return',{exact:true}).fill('2026-09-26T08:00');
+  await page.getByRole('button',{name:'Send Long Pass request'}).click();
+  assert.match(await page.locator('#long-pass-error').innerText(),/Expected return must be later/);
+  await page.getByLabel('Expected return',{exact:true}).fill('2026-09-27T18:00');
+  await page.getByRole('button',{name:'Send Long Pass request'}).click();
+  assert.equal(await page.locator('.modal').count(),0);
+  await page.selectOption('#role-select','Warden');
+  await page.getByRole('heading',{name:'Pending Long Pass requests'}).waitFor();
+  assert.match(await page.locator('main').innerText(),/Family visit test/);
+  const row=page.getByRole('row').filter({hasText:'Family visit test'});
+  await row.getByRole('button',{name:'Approve',exact:true}).click();
+  await page.getByRole('button',{name:'Confirm approve'}).click();
+  assert.equal(await page.getByRole('row').filter({hasText:'Family visit test'}).count(),0);
+  for(const r of ['Admin','Mentor','Warden','Student']){
+    await page.selectOption('#role-select',r);
+    await page.waitForFunction(r=>document.querySelector('.sidebar').getAttribute('aria-label')===r+' navigation',r);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,r+' desktop overflow');
+  }
+  await page.setViewportSize({width:390,height:844});
+  for(const r of ['Student','Warden','Admin','Mentor']){
+    await page.selectOption('#role-select',r);
+    await page.waitForFunction(r=>document.querySelector('.sidebar').getAttribute('aria-label')===r+' navigation',r);
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,r+' mobile overflow');
+  }
+  await page.selectOption('#role-select','Student');
+  await page.getByRole('heading',{name:'Quick Pass',exact:true}).waitFor();
+  await page.clock.fastForward(5000);
+  await page.screenshot({path:'screenshots/student-mobile.png',fullPage:true});
+  await page.goto('http://localhost:3000');
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,'landing mobile overflow');
+  await page.getByRole('button',{name:'Register',exact:true}).click();
+  await page.getByLabel('Preferred mess',{exact:true}).fill('North Campus Mess');
+  assert.equal(await page.getByLabel('Preferred mess',{exact:true}).inputValue(),'North Campus Mess');
+  assert.equal(await page.evaluate(()=>document.querySelector('.modal').scrollWidth>document.querySelector('.modal').clientWidth),false,'registration mobile overflow');
+  await page.screenshot({path:'screenshots/registration-mobile.png'});
+  assert.deepEqual(errors,[]);
+  console.log('Browser passed: landing role explorer, Quick Pass generation/expiry/closed hours, Long Pass approval workflow, desktop/mobile role layouts, registration mess field, no runtime errors. QR decode: '+(decoded?'verified':'API unavailable'));
+  await browser.close();
+})().catch(e=>{console.error(e);process.exit(1);});

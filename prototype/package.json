@@ -1,0 +1,15 @@
+{
+  "name": "hostel-ops",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check app.js && node --check passes.js && node --check promotions.js && node --check server.js",
+    "test": "node smoke-test.js",
+    "test:browser": "node browser-test.js",
+    "test:promotion": "node promotion-browser-test.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.63.0"
+  }
+}
