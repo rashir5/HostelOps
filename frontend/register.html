@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Registration — Hostel Ops | SPIT Mumbai</title>
+  <meta name="description"
+    content="Hostel admission application form for Bharatiya Vidya Bhavan's Sardar Patel Institute of Technology (SPIT)." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/app_icon_192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <script>
+    (function () {
+      var t = localStorage.getItem('spit_theme') || 'light';
+      if (t === 'dark') document.documentElement.classList.add('dark');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/spit.css" />
+  <style>
+    .reg-wrap {
+      max-width: 840px;
+      margin: 2.5rem auto 4rem;
+      padding: 0 1.25rem;
+    }
+
+    .reg-card {
+      background: var(--spit-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .reg-card-header {
+      background: var(--spit-navy-dark);
+      color: #ffffff;
+      padding: 2rem 2.25rem 1.5rem;
+      border-bottom: 3px solid var(--spit-maroon);
+    }
+
+    .reg-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .reg-subtitle {
+      font-size: 0.875rem;
+      color: #cbd5e1;
+    }
+
+    .progress-bar-wrap {
+      display: flex;
+      background: var(--spit-surface-hover);
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+    }
+
+    .step-pill {
+      flex: 1;
+      min-width: 130px;
+      padding: 0.875rem 1rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 3px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      cursor: default;
+    }
+
+    .step-pill.active {
+      color: var(--spit-teal);
+      border-bottom-color: var(--spit-teal);
+      background: var(--spit-surface);
+    }
+
+    .step-pill.completed {
+      color: var(--status-green);
+    }
+
+    .step-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--border-color);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .step-pill.active .step-circle {
+      background: var(--spit-teal);
+      color: #ffffff;
+    }
+
+    .step-pill.completed .step-circle {
+      background: var(--status-green);
+      color: #ffffff;
+    }
+
+    .form-body {
+      padding: 2.25rem;
+    }
+
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.375rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--spit-surface);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      transition: var(--transition);
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--spit-teal);
+      box-shadow: 0 0 0 3px var(--spit-teal-light);
+    }
+
+    .form-helper {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    .upload-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      background: var(--spit-surface-hover);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .upload-zone:hover {
+      border-color: var(--spit-teal);
+      background: var(--spit-teal-light);
+    }
+
+    .uploaded-file-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--spit-teal-light);
+      border: 1px solid var(--spit-teal);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      margin-top: 1rem;
+      font-size: 0.875rem;
+    }
+
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-table td {
+      padding: 0.625rem 0.875rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .summary-table td:first-child {
+      font-weight: 600;
+      color: var(--text-muted);
+      width: 35%;
+    }
+
+    .step-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .status-lookup-card {
+      margin-top: 3rem;
+      background: var(--spit-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+    }
+
+    @media (max-width: 680px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+
+      .form-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Institutional Header Band -->
+  <header class="spit-header-band">
+    <div class="spit-brand-row">
+      <a href="index.html" class="spit-logo-lockup">
+        <img src="assets/spit_logo.png" alt="SPIT Mumbai Logo" class="spit-logo-img" />
+        <div class="spit-text-block">
+          <span class="spit-parent-name">Bharatiya Vidya Bhavan's</span>
+          <span class="spit-inst-name">Sardar Patel Institute of Technology</span>
+          <span class="spit-tagline">Autonomous Institute · Affiliated to University of Mumbai</span>
+        </div>
+      </a>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span class="spit-app-tag">Registration Portal</span>
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme" title="Toggle Dark/Light Mode"
+          style="background:var(--border-color);color:var(--text-primary);">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="spit-nav">
+    <div class="spit-nav-container">
+      <ul class="spit-nav-links">
+        <li><a href="index.html" class="spit-nav-link">← Back to Home</a></li>
+        <li><a href="#status" class="spit-nav-link">Check Application Status</a></li>
+      </ul>
+      <div class="spit-nav-right">
+        <a href="login.html" class="btn btn-secondary btn-sm spit-nav-login-btn">Portal Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="reg-wrap">
+    <div class="reg-card">
+      <div class="reg-card-header">
+        <h1 class="reg-title">Hostel Admission Registration</h1>
+        <p class="reg-subtitle">Academic Year 2024–25 · Bharatiya Vidya Bhavan's S.P.I.T. Campus</p>
+      </div>
+
+      <!-- Step Indicator -->
+      <div class="progress-bar-wrap">
+        <button class="step-pill active" id="pill-1"><span class="step-circle">1</span> A. Student Info</button>
+        <button class="step-pill" id="pill-2"><span class="step-circle">2</span> B. Hostel Req.</button>
+        <button class="step-pill" id="pill-3"><span class="step-circle">3</span> C. Mess Option</button>
+        <button class="step-pill" id="pill-4"><span class="step-circle">4</span> D. Fee Receipt</button>
+        <button class="step-pill" id="pill-5"><span class="step-circle">5</span> E. Review &amp; Submit</button>
+      </div>
+
+      <form id="registrationForm" class="form-body" novalidate>
+
+        <!-- ── Section A: Student Information ── -->
+        <div class="form-step active" id="step-1">
+          <h2 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:1.25rem;">
+            Section A: Student Institutional Details
+          </h2>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="fullName">Full Name (as per college admission) *</label>
+              <input type="text" id="fullName" class="form-control" placeholder="e.g. Sakshi Patil" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="collegeRegNo">College Registration Number *</label>
+              <input type="text" id="collegeRegNo" class="form-control" placeholder="e.g. 20241001" required />
+              <p class="form-helper">Unique institutional identifier issued by SPIT.</p>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="collegeEmail">College Email Address *</label>
+              <input type="email" id="collegeEmail" class="form-control" placeholder="e.g. sakshi.patil@spit.ac.in"
+                required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="mobileNo">Mobile Number *</label>
+              <input type="tel" id="mobileNo" class="form-control" placeholder="e.g. 9820012345" required />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="courseSelect">Programme / Course *</label>
+              <select id="courseSelect" class="form-control" required>
+                <option value="B.Tech" selected>B.Tech (Bachelor of Technology)</option>
+                <option value="M.Tech">M.Tech (Master of Technology)</option>
+                <option value="MCA">MCA (Master of Computer Applications)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="branchSelect">Branch / Department *</label>
+              <select id="branchSelect" class="form-control" required>
+                <option value="Computer Engineering" selected>Computer Engineering</option>
+                <option value="Artificial Intelligence & Data Science">Artificial Intelligence &amp; Data Science
+                </option>
+                <option value="Computer Science & Engineering">Computer Science &amp; Engineering</option>
+                <option value="Electronics & Telecommunication Engineering">Electronics &amp; Telecommunication
+                  Engineering</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="academicYearSelect">Current Academic Year *</label>
+              <select id="academicYearSelect" class="form-control" required>
+                <option value="1st Year" selected>1st Year (First Year)</option>
+                <option value="2nd Year">2nd Year (Second Year)</option>
+                <option value="3rd Year">3rd Year (Third Year)</option>
+                <option value="4th Year">4th Year (Final Year)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="admissionYear">Admission Year *</label>
+              <input type="number" id="admissionYear" class="form-control" value="2024" min="2021" max="2026"
+                required />
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-top:0.5rem;padding-top:1rem;border-top:1px solid var(--border-color);">
+            <div class="form-group">
+              <label class="form-label" for="guardianName">Parent / Guardian Name *</label>
+              <input type="text" id="guardianName" class="form-control" placeholder="Guardian Full Name" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="guardianPhone">Parent / Guardian Contact Phone *</label>
+              <input type="tel" id="guardianPhone" class="form-control" placeholder="Guardian Mobile Number" required />
+              <p class="form-helper">Required by institutional safety &amp; pass policy.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="studentPassword">Set Account Password (for portal tracking) *</label>
+            <input type="password" id="studentPassword" class="form-control" placeholder="Minimum 6 characters"
+              minlength="6" required />
+          </div>
+
+          <div class="step-actions">
+            <span></span>
+            <button type="button" class="btn btn-primary" onclick="nextStep(1)">Proceed to Hostel Requirements
+              →</button>
+          </div>
+        </div>
+
+        <!-- ── Section B: Hostel Requirements ── -->
+        <div class="form-step" id="step-2">
+          <h2 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:1.25rem;">
+            Section B: Accommodation Application
+          </h2>
+
+          <div class="card" style="margin-bottom:1.5rem;border-left:4px solid var(--spit-teal);">
+            <label style="display:flex;align-items:flex-start;gap:0.75rem;cursor:pointer;">
+              <input type="checkbox" id="hostelRequiredCheck" checked style="width:18px;height:18px;margin-top:2px;" />
+              <div>
+                <strong style="font-size:0.9375rem;color:var(--spit-navy);">I am applying for college hostel
+                  accommodation for Academic Year 2026-27</strong>
+                <p style="font-size:0.8125rem;color:var(--text-secondary);margin-top:0.25rem;">
+                  SPIT Campus Hostels, Munshi Nagar, Andheri (West), Mumbai.
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <div class="card"
+            style="background:var(--spit-teal-light);border-color:var(--spit-teal);margin-bottom:1.5rem;">
+            <h4 style="font-size:0.875rem;font-weight:700;color:var(--spit-teal);margin-bottom:0.25rem;">
+              Institutional Notice Regarding Room Allocation
+            </h4>
+            <p style="font-size:0.8125rem;color:var(--text-primary);line-height:1.5;">
+              Submitting this registration application does not promise or finalize room allocation. The final room and
+              bed allocation will be made or confirmed by the authorized SPIT hostel administration following document
+              and fee verification.
+            </p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(2)">← Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep(2)">Proceed to Mess Preferences →</button>
+          </div>
+        </div>
+
+        <!-- ── Section C: Mess Preferences ── -->
+        <div class="form-step" id="step-3">
+          <h2 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:0.5rem;">
+            Section C: Mess Preferences
+          </h2>
+          <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1.5rem;">
+            Verified mess arrangements dynamically loaded from the SPIT database.
+          </p>
+
+          <div id="messOptionsContainer" style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem;">
+            <!-- Rendered dynamically -->
+            <p style="font-size:0.875rem;color:var(--text-muted);">Loading verified mess plans…</p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(3)">← Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep(3)">Proceed to Fee Receipt →</button>
+          </div>
+        </div>
+
+        <!-- ── Section D: Fee Receipt Upload ── -->
+        <div class="form-step" id="step-4">
+          <h2 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:0.5rem;">
+            Section D: Hostel Fee Receipt Upload
+          </h2>
+          <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1.5rem;">
+            The only document required during registration is the paid hostel fee receipt issued by the SPIT accounts
+            department.
+          </p>
+
+          <input type="file" id="feeReceiptInput" accept=".pdf,.png,.jpg,.jpeg" style="display:none;" />
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('feeReceiptInput').click()">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              style="margin:0 auto 0.75rem;color:var(--spit-teal);">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <p style="font-weight:600;font-size:0.9375rem;color:var(--spit-navy);margin-bottom:0.25rem;">
+              Click to choose Fee Receipt file
+            </p>
+            <p style="font-size:0.75rem;color:var(--text-muted);">
+              Supported: PDF, JPG, PNG (Max file size: 5 MB)
+            </p>
+          </div>
+
+          <div id="filePreviewBar" class="uploaded-file-bar" style="display:none;">
+            <div>
+              <strong id="previewFileName">receipt.pdf</strong>
+              <span id="previewFileSize" style="margin-left:0.5rem;font-size:0.75rem;color:var(--text-muted);">(1.2
+                MB)</span>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="removeUploadedFile()">Remove /
+              Replace</button>
+          </div>
+
+          <div class="card"
+            style="background:var(--spit-surface-hover);border-color:var(--border-color);margin-top:1.5rem;">
+            <p style="font-size:0.75rem;color:var(--text-secondary);">
+              <strong>Notice:</strong> Uploading your receipt attaches it to your application for independent
+              administrative verification. Verification is confirmed once checked by the authorized hostel
+              administration.
+            </p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(4)">← Back</button>
+            <button type="button" class="btn btn-primary" onclick="nextStep(4)">Proceed to Review &amp; Submit
+              →</button>
+          </div>
+        </div>
+
+        <!-- ── Section E: Review and Submit ── -->
+        <div class="form-step" id="step-5">
+          <h2 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:0.5rem;">
+            Section E: Review &amp; Submit Registration
+          </h2>
+          <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1.5rem;">
+            Please review the details below before submitting your official application to the administration.
+          </p>
+
+          <table class="summary-table">
+            <tbody>
+              <tr>
+                <td>Full Name</td>
+                <td id="sumName">—</td>
+              </tr>
+              <tr>
+                <td>Registration No.</td>
+                <td id="sumRegNo">—</td>
+              </tr>
+              <tr>
+                <td>College Email</td>
+                <td id="sumEmail">—</td>
+              </tr>
+              <tr>
+                <td>Mobile Number</td>
+                <td id="sumPhone">—</td>
+              </tr>
+              <tr>
+                <td>Programme &amp; Branch</td>
+                <td id="sumBranch">—</td>
+              </tr>
+              <tr>
+                <td>Academic Year</td>
+                <td id="sumYear">—</td>
+              </tr>
+              <tr>
+                <td>Guardian Contact</td>
+                <td id="sumGuardian">—</td>
+              </tr>
+              <tr>
+                <td>Hostel Application</td>
+                <td id="sumHostel">Yes, applying for hostel</td>
+              </tr>
+              <tr>
+                <td>Mess Selection</td>
+                <td id="sumMess">—</td>
+              </tr>
+              <tr>
+                <td>Fee Receipt</td>
+                <td id="sumReceipt">Not uploaded</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div id="submissionAlert" class="card" style="display:none;margin-bottom:1.5rem;"></div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(5)">← Modify Details</button>
+            <button type="submit" class="btn btn-maroon" id="submitBtn"
+              style="padding:0.75rem 2rem;font-size:0.9375rem;">
+              Submit Registration
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ── Public Status Lookup ── -->
+    <div class="status-lookup-card" id="status">
+      <h3 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:0.5rem;">
+        Check Your Application Status
+      </h3>
+      <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:1rem;">
+        Already submitted your registration? Enter your College Registration Number to view your current review status.
+      </p>
+      <div style="display:flex;gap:0.75rem;max-width:480px;">
+        <input type="text" id="checkRegInput" class="form-control" placeholder="e.g. 20241001" />
+        <button type="button" class="btn btn-primary" onclick="lookupStatus()">Check Status</button>
+      </div>
+
+      <div id="statusResultBox" style="display:none;margin-top:1.25rem;"></div>
+    </div>
+  </main>
+
+  <!-- Footer with required credit -->
+  <footer class="spit-footer">
+    <div class="spit-footer-content">
+      <p class="spit-footer-credit">
+        Made with ♥ by Sakshi, Rashi &amp; Aishwarya
+      </p>
+      <div class="spit-footer-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#hostel-info">Hostel Information</a>
+        <a href="login.html">Login</a>
+      </div>
+      <p class="spit-footer-disclaimer">
+        Bharatiya Vidya Bhavan's Sardar Patel Institute of Technology (SPIT), Munshi Nagar, Andheri (West), Mumbai – 400
+        058.
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('spit_theme', isDark ? 'dark' : 'light');
+    });
+
+    let currentStep = 1;
+    let uploadedFileObj = null;
+    let selectedMessPlan = 'Regular Vegetarian Mess';
+
+    // Fetch verified mess options from backend
+    const loadMessOptions = async () => {
+      const container = document.getElementById('messOptionsContainer');
+      try {
+        const res = await API.settings.get();
+        const options = res.data?.messOptions?.filter(o => o.isActive) || [];
+
+        if (options.length === 0) {
+          container.innerHTML = `
+            <div class="card">
+              <p style="font-size:0.875rem;color:var(--text-secondary);">
+                Mess options will be confirmed by the hostel administration.
+              </p>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = options.map((opt, i) => `
+          <label class="card" style="display:flex;align-items:flex-start;gap:0.875rem;cursor:pointer;">
+            <input type="radio" name="messRadio" value="${opt.name}" ${i === 0 ? 'checked' : ''} style="margin-top:4px;" />
+            <div style="flex:1;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;">
+                <strong style="color:var(--spit-navy);font-size:0.9375rem;">${opt.name}</strong>
+                <span class="badge badge-teal">₹${opt.monthlyFee.toLocaleString()}/mo</span>
+              </div>
+              <p style="font-size:0.8125rem;color:var(--text-secondary);margin-top:0.25rem;">${opt.mealCoverage}</p>
+              ${opt.description ? `<p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.25rem;">${opt.description}</p>` : ''}
+            </div>
+          </label>
+        `).join('');
+
+        selectedMessPlan = options[0]?.name || 'Regular Vegetarian Mess';
+      } catch (err) {
+        container.innerHTML = `
+          <div class="card">
+            <p style="font-size:0.875rem;color:var(--text-secondary);">
+              Mess options will be confirmed by the hostel administration.
+            </p>
+          </div>`;
+      }
+    };
+    loadMessOptions();
+
+    // Step navigation
+    const showStep = (step) => {
+      document.querySelectorAll('.form-step').forEach((s, i) => {
+        s.classList.toggle('active', i + 1 === step);
+      });
+      document.querySelectorAll('.step-pill').forEach((p, i) => {
+        p.classList.toggle('active', i + 1 === step);
+        p.classList.toggle('completed', i + 1 < step);
+      });
+      currentStep = step;
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    };
+
+    const validateStep = (step) => {
+      if (step === 1) {
+        const name = document.getElementById('fullName').value.trim();
+        const reg = document.getElementById('collegeRegNo').value.trim();
+        const email = document.getElementById('collegeEmail').value.trim();
+        const phone = document.getElementById('mobileNo').value.trim();
+        const gName = document.getElementById('guardianName').value.trim();
+        const gPhone = document.getElementById('guardianPhone').value.trim();
+        const pw = document.getElementById('studentPassword').value;
+
+        if (!name || !reg || !email || !phone || !gName || !gPhone || !pw) {
+          alert('Please fill in all required fields in Section A.');
+          return false;
+        }
+        if (pw.length < 6) {
+          alert('Password must be at least 6 characters long.');
+          return false;
+        }
+      }
+      return true;
+    };
+
+    const nextStep = (step) => {
+      if (!validateStep(step)) return;
+      if (step === 4) populateReview();
+      showStep(step + 1);
+    };
+
+    const prevStep = (step) => {
+      showStep(step - 1);
+    };
+
+    // File upload handling
+    const fileInput = document.getElementById('feeReceiptInput');
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size exceeds 5 MB. Please select a smaller receipt scan or PDF.');
+        fileInput.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (loadEvt) => {
+        uploadedFileObj = {
+          name: file.name,
+          size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+          data: loadEvt.target.result,
+        };
+        document.getElementById('uploadZone').style.display = 'none';
+        document.getElementById('filePreviewBar').style.display = 'flex';
+        document.getElementById('previewFileName').textContent = file.name;
+        document.getElementById('previewFileSize').textContent = `(${uploadedFileObj.size})`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const removeUploadedFile = () => {
+      uploadedFileObj = null;
+      fileInput.value = '';
+      document.getElementById('uploadZone').style.display = 'block';
+      document.getElementById('filePreviewBar').style.display = 'none';
+    };
+
+    // Review population
+    const populateReview = () => {
+      document.getElementById('sumName').textContent = document.getElementById('fullName').value;
+      document.getElementById('sumRegNo').textContent = document.getElementById('collegeRegNo').value;
+      document.getElementById('sumEmail').textContent = document.getElementById('collegeEmail').value;
+      document.getElementById('sumPhone').textContent = document.getElementById('mobileNo').value;
+      document.getElementById('sumBranch').textContent = `${document.getElementById('courseSelect').value} — ${document.getElementById('branchSelect').value}`;
+      document.getElementById('sumYear').textContent = `${document.getElementById('academicYearSelect').value} (Admitted ${document.getElementById('admissionYear').value})`;
+      document.getElementById('sumGuardian').textContent = `${document.getElementById('guardianName').value} (${document.getElementById('guardianPhone').value})`;
+      document.getElementById('sumHostel').textContent = document.getElementById('hostelRequiredCheck').checked ? 'Yes, applying for accommodation' : 'Not required';
+
+      const checkedMess = document.querySelector('input[name="messRadio"]:checked');
+      document.getElementById('sumMess').textContent = checkedMess ? checkedMess.value : 'Mess options will be confirmed by the hostel administration.';
+
+      document.getElementById('sumReceipt').textContent = uploadedFileObj ? `${uploadedFileObj.name} (${uploadedFileObj.size})` : 'Not uploaded';
+    };
+
+    // Form submit
+    document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+
+      const checkedMess = document.querySelector('input[name="messRadio"]:checked');
+
+      const payload = {
+        name: document.getElementById('fullName').value.trim(),
+        collegeRegistrationNumber: document.getElementById('collegeRegNo').value.trim(),
+        email: document.getElementById('collegeEmail').value.trim(),
+        phone: document.getElementById('mobileNo').value.trim(),
+        course: document.getElementById('courseSelect').value,
+        branch: document.getElementById('branchSelect').value,
+        academicYear: document.getElementById('academicYearSelect').value,
+        admissionYear: document.getElementById('admissionYear').value,
+        guardianName: document.getElementById('guardianName').value.trim(),
+        guardianPhone: document.getElementById('guardianPhone').value.trim(),
+        hostelRequired: document.getElementById('hostelRequiredCheck').checked,
+        messPreference: checkedMess ? checkedMess.value : 'Mess options will be confirmed by the hostel administration.',
+        feeReceiptFile: uploadedFileObj ? { name: uploadedFileObj.name, data: uploadedFileObj.data } : null,
+        feeReceiptName: uploadedFileObj ? uploadedFileObj.name : null,
+        feeReceiptData: uploadedFileObj ? uploadedFileObj.data : null,
+        password: document.getElementById('studentPassword').value,
+      };
+
+      const alertBox = document.getElementById('submissionAlert');
+
+      try {
+        const res = await API.students.publicRegister(payload);
+        alertBox.className = 'card';
+        alertBox.style.display = 'block';
+        alertBox.style.backgroundColor = 'var(--status-green-bg)';
+        alertBox.style.borderColor = 'var(--status-green-border)';
+        alertBox.innerHTML = `
+          <h4 style="color:var(--status-green);font-size:1.0625rem;font-weight:700;margin-bottom:0.5rem;">
+            Registration Submitted Successfully
+          </h4>
+          <p style="font-size:0.875rem;color:var(--text-primary);line-height:1.55;">
+            Your registration has been submitted. The administration will review your details and fee receipt.
+          </p>
+          <div style="margin-top:0.75rem;font-size:0.8125rem;color:var(--text-secondary);">
+            <strong>Registration Identifier:</strong> ${res.data.registrationNumber} &nbsp;·&nbsp;
+            <strong>Initial Status:</strong> <span class="badge badge-amber">Pending Review</span>
+          </div>
+          <div style="margin-top:1.25rem;">
+            <a href="login.html" class="btn btn-primary btn-sm">Login with your credentials →</a>
+          </div>
+        `;
+        btn.style.display = 'none';
+      } catch (err) {
+        alertBox.className = 'card';
+        alertBox.style.display = 'block';
+        alertBox.style.backgroundColor = 'var(--status-red-bg)';
+        alertBox.style.borderColor = 'var(--status-red-border)';
+        alertBox.innerHTML = `
+          <strong style="color:var(--status-red);">Submission Error</strong>
+          <p style="font-size:0.875rem;margin-top:0.25rem;">${err.message}</p>
+        `;
+        btn.disabled = false;
+        btn.textContent = 'Submit Registration';
+      }
+    });
+
+    // Application status lookup
+    const lookupStatus = async () => {
+      const reg = document.getElementById('checkRegInput').value.trim();
+      const resBox = document.getElementById('statusResultBox');
+      if (!reg) {
+        alert('Please enter your registration number.');
+        return;
+      }
+
+      resBox.style.display = 'block';
+      resBox.innerHTML = '<p style="font-size:0.875rem;color:var(--text-muted)">Querying administration records…</p>';
+
+      try {
+        const res = await API.students.checkStatus(reg);
+        const s = res.data;
+        const statusClass = s.registrationStatus === 'Approved' ? 'badge-green' : s.registrationStatus === 'Rejected' ? 'badge-red' : 'badge-amber';
+        const receiptClass = s.feeReceipt?.verificationStatus === 'Verified' ? 'badge-green' : s.feeReceipt?.verificationStatus === 'Rejected' ? 'badge-red' : 'badge-amber';
+
+        resBox.innerHTML = `
+          <div class="card" style="border-left:4px solid var(--spit-teal);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+              <strong style="color:var(--spit-navy);font-size:1.0625rem;">${s.name}</strong>
+              <span class="badge ${statusClass}">${s.registrationStatus}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;font-size:0.8125rem;color:var(--text-secondary);">
+              <div><strong>Registration No:</strong> ${s.studentId}</div>
+              <div><strong>Branch:</strong> ${s.branch}</div>
+              <div><strong>Academic Year:</strong> ${s.academicYear}</div>
+              <div><strong>Fee Receipt:</strong> <span class="badge ${receiptClass}">${s.feeReceipt?.verificationStatus || 'Pending Review'}</span></div>
+              <div><strong>Room Allocation:</strong> ${s.allocatedRoom ? 'Room Allocated' : 'Pending Allocation'}</div>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        resBox.innerHTML = `
+          <div class="card" style="background:var(--status-red-bg);border-color:var(--status-red-border);">
+            <strong style="color:var(--status-red);font-size:0.875rem;">Record Not Found</strong>
+            <p style="font-size:0.8125rem;margin-top:0.25rem;">${err.message}</p>
+          </div>
+        `;
+      }
+    };
+  </script>
+
+  <script src="js/pwa-installer.js"></script>
+</body>
+
+</html>

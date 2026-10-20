@@ -1,0 +1,36 @@
+{
+  "name": "SPIT Hostel Ops — Campus Operations",
+  "short_name": "Hostel Ops",
+  "description": "Hostel allocation, digital night-out passes, and operations management for Sardar Patel Institute of Technology (SPIT).",
+  "start_url": "/dashboard.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#08142c",
+  "theme_color": "#0d2149",
+  "icons": [
+    {
+      "src": "assets/app_icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/app_icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/app_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ]
+}

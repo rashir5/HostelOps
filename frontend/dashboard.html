@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d2149" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Hostel Ops — SPIT Mumbai Dashboard</title>
+  <meta name="description" content="Hostel operations, room allocation, digital passes, and complaints management for Sardar Patel Institute of Technology (SPIT)." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/app_icon_192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Apply saved theme and sidebar state before render -->
+  <script>
+    (function() {
+      var t = localStorage.getItem('spit_theme') || 'light';
+      if (t === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+      if (localStorage.getItem('spit_sidebar_collapsed') === 'true' && window.innerWidth > 900) {
+        document.documentElement.classList.add('sidebar-collapsed');
+      }
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/spit.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <style>
+    /* ─── Institutional Overrides for SPIT Look ─── */
+    .spit-sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+    .spit-sidebar-img {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+    }
+    .role-badge-pill {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .role-admin   { background: #fee2e2; color: #991b1b; }
+    .role-warden  { background: #fef3c7; color: #92400e; }
+    .role-mentor  { background: #e0e7ff; color: #3730a3; }
+    .role-student { background: #dcfce7; color: #166534; }
+
+    :root.dark .role-admin   { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    :root.dark .role-warden  { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+    :root.dark .role-mentor  { background: rgba(99, 102, 241, 0.2); color: #c7d2fe; }
+    :root.dark .role-student { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+
+    .qr-badge-box {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--spit-surface);
+      border: 1px dashed var(--spit-teal);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      font-family: monospace;
+      font-weight: 700;
+      color: var(--spit-teal);
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      overflow-x: auto;
+    }
+    .filter-tab-btn {
+      padding: 0.4rem 0.85rem;
+      background: none;
+      border: none;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+    .filter-tab-btn.active {
+      background: var(--spit-teal-light);
+      color: var(--spit-teal);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar Navigation ────────────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header" style="padding:1rem 1.25rem;">
+    <a href="index.html" class="spit-sidebar-logo">
+      <img src="assets/spit_logo.png" alt="SPIT Logo" class="spit-sidebar-img" />
+      <div>
+        <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);line-height:1;">SPIT Mumbai</div>
+        <div style="font-size:1rem;font-weight:800;color:var(--text-primary);letter-spacing:-0.01em;">Hostel Ops</div>
+      </div>
+    </a>
+    <div style="display:flex;align-items:center;gap:0.35rem;">
+      <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" onclick="toggleSidebar()" title="Hide/Collapse Navigation Bar" aria-label="Collapse sidebar">
+        <svg viewBox="0 0 20 20" fill="currentColor" style="width:1.25rem;height:1.25rem;"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+      </button>
+      <button class="sidebar-close" id="sidebarClose" onclick="closeSidebar()" aria-label="Close sidebar">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav" id="sidebarNav">
+    <!-- Dynamic links injected based on role -->
+    <div class="nav-section-label">Operations</div>
+    <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+      Overview
+    </a>
+
+    <!-- Admin / Warden: Room Grid -->
+    <a href="#" class="nav-item" data-page="rooms" id="nav-rooms">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762z"/></svg>
+      Hostel Rooms
+    </a>
+
+    <!-- Admin: Registrations review -->
+    <a href="#" class="nav-item" data-page="registrations" id="nav-registrations">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+      Registration Reviews
+    </a>
+
+    <!-- Digital Passes -->
+    <a href="#" class="nav-item" data-page="passes" id="nav-passes">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+      Digital Passes &amp; QR Code
+    </a>
+
+    <!-- Complaints -->
+    <a href="#" class="nav-item" data-page="complaints" id="nav-complaints">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+      Complaints
+    </a>
+
+    <!-- Mentors / Mentoring -->
+    <a href="#" class="nav-item" data-page="mentoring" id="nav-mentoring">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/></svg>
+      Mentor Support
+    </a>
+
+    <!-- Announcements -->
+    <a href="#" class="nav-item" data-page="announcements" id="nav-announcements">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+      Announcements
+    </a>
+
+    <!-- Admin: Settings & Mess -->
+    <a href="#" class="nav-item" data-page="settings" id="nav-settings" title="Mess Plans, Staff Provisioning &amp; Batch Promotion">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+      Mess &amp; Settings
+    </a>
+
+    <!-- Admin: Reports & CSV -->
+    <a href="#" class="nav-item" data-page="reports" id="nav-reports">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      Export Reports
+    </a>
+
+    <!-- Admin: Live Database Explorer -->
+    <a href="#" class="nav-item" data-page="database" id="nav-database">
+      <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/><path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/><path d="M17 4c0 1.657-3.134 3-7 3S3 5.657 3 4s3.134-3 7-3 7 1.343 7 3z"/></svg>
+      Database Explorer
+    </a>
+  </nav>
+
+  <!-- User Card in Sidebar -->
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <div class="user-info">
+        <p class="user-name" id="userName">User</p>
+        <span class="role-badge-pill" id="userRoleBadge">ROLE</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn" title="Logout">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h3a1 1 0 100-2H4V5h2a1 1 0 100-2H3zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ── Main Wrapper ──────────────────────────────────────────────────────── -->
+<div class="main-wrapper">
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger" type="button" onclick="window.toggleSidebar(event)" aria-label="Toggle navigation menu">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+    </button>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <h2 class="page-title" id="pageTitle">Hostel Overview</h2>
+      <span class="badge badge-teal" id="campusBadge">SPIT Campus</span>
+    </div>
+
+    <div class="topbar-right">
+      <div class="last-updated" id="lastUpdated">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+        <span id="updatedTime">—</span>
+      </div>
+
+      <!-- PWA Install as App Button -->
+      <button class="btn-install-app" id="pwaInstallBtn" onclick="triggerPwaInstall()" title="Install SPIT Hostel Ops as an App">
+        <span>📲</span>
+        <span class="install-text-long">Install App</span>
+      </button>
+
+      <!-- Universal Emergency SOS Broadcast Button (All Logins: Student, Mentor, Warden, Admin) -->
+      <button class="btn-sos" id="emergencySosBtn" onclick="openEmergencySosModal()" title="Trigger Campus Emergency SOS & SMS Broadcast">
+        <span class="sos-beacon"></span>
+        <span class="sos-text-long">🚨 Emergency SOS</span>
+      </button>
+
+      <!-- Theme toggle -->
+      <button class="theme-toggle" id="themeToggle" title="Toggle Light / Dark Mode" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
+        </svg>
+      </button>
+
+      <button class="refresh-btn" id="refreshBtn" title="Refresh data">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Dynamic Content Container ─────────────────────────────────────────── -->
+  <main class="page-container" id="pageContent">
+    <!-- Dynamic page views are rendered here via dashboard.js -->
+    <div style="padding:2rem;text-align:center;color:var(--text-muted);">
+      Loading SPIT Hostel Ops…
+    </div>
+  </main>
+</div>
+
+<!-- ── Toast Notifications ── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ── Modals Container ── -->
+<div id="modalContainer"></div>
+
+<script src="js/api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="js/pwa-installer.js"></script>
+<script src="js/dashboard.js?v=20261020_v3"></script>
+
+
+</body>
+</html>

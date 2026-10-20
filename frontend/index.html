@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hostel Ops — Bharatiya Vidya Bhavan's Sardar Patel Institute of Technology (SPIT)</title>
+  <meta name="description"
+    content="Hostel Ops — Official Hostel Allocation, Pass & Facility Management System for Sardar Patel Institute of Technology (SPIT), Mumbai." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/app_icon_192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <!-- Theme restoration script before paint -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('spit_theme') || 'light';
+      if (t === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/spit.css" />
+  <style>
+    /* ── Landing Page Specific Styles ── */
+    .landing-hero {
+      background: linear-gradient(180deg, var(--spit-surface) 0%, var(--spit-ivory) 100%);
+      padding: 4.5rem 1.5rem 3.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .landing-hero-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--spit-teal-light);
+      color: var(--spit-teal);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-heading {
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: var(--spit-navy);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtext {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-preview-card {
+      background: var(--spit-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.875rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 1rem;
+    }
+
+    .preview-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--spit-navy);
+    }
+
+    .preview-rooms-mini {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .mini-room {
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+
+    .mini-room.empty {
+      background: var(--room-empty-bg);
+      color: var(--room-empty);
+      border: 1px solid var(--room-empty-border);
+    }
+
+    .mini-room.partial {
+      background: var(--room-partial-bg);
+      color: var(--room-partial);
+      border: 1px solid var(--room-partial-border);
+    }
+
+    .mini-room.full {
+      background: var(--room-full-bg);
+      color: var(--room-full);
+      border: 1px solid var(--room-full-border);
+    }
+
+    .section-wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 3rem;
+    }
+
+    .section-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--spit-navy);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-lead {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--spit-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.75rem;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background-color: var(--spit-teal-light);
+      color: var(--spit-teal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .feature-name {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--spit-navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .info-box {
+      background: var(--spit-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+    }
+
+    .info-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+      margin-top: 1.25rem;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .info-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--spit-teal);
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .notice-callout {
+      background: var(--spit-teal-light);
+      border-left: 4px solid var(--spit-teal);
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 900px) {
+      .landing-hero-container {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-heading {
+        font-size: 2.25rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── Institutional Header Band ── -->
+  <header class="spit-header-band">
+    <div class="spit-brand-row">
+      <a href="index.html" class="spit-logo-lockup">
+        <img src="assets/spit_logo.png" alt="SPIT Mumbai Official Logo" class="spit-logo-img" />
+        <div class="spit-text-block">
+          <span class="spit-parent-name">Bharatiya Vidya Bhavan's</span>
+          <span class="spit-inst-name">Sardar Patel Institute of Technology</span>
+          <span class="spit-tagline">Autonomous Institute · Affiliated to University of Mumbai</span>
+        </div>
+      </a>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <button class="btn-install-app" id="pwaInstallBtn" onclick="triggerPwaInstall()" title="Install SPIT Hostel Ops as an App">
+          <span>📲</span>
+          <span class="install-text-long">Install App</span>
+        </button>
+        <span class="spit-app-tag">Hostel Ops</span>
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme" title="Toggle Dark/Light Mode"
+          style="background:var(--border-color);color:var(--text-primary);">
+          <svg viewBox="0 0 20 20" fill="currentColor">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Navigation Bar ── -->
+  <nav class="spit-nav">
+    <div class="spit-nav-container">
+      <button class="landing-nav-toggle" id="landingNavToggle" type="button" onclick="window.toggleLandingNav(event)" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+        </svg>
+        <span>Menu</span>
+      </button>
+      <ul class="spit-nav-links" id="landingNavLinks">
+        <li><a href="#home" class="spit-nav-link active">Home</a></li>
+        <li><a href="#features" class="spit-nav-link">Features</a></li>
+        <li><a href="#hostel-info" class="spit-nav-link">Hostel Information</a></li>
+        <li><a href="#contact" class="spit-nav-link">Contact</a></li>
+      </ul>
+      <div class="spit-nav-right">
+        <a href="login.html" class="btn btn-secondary btn-sm" style="color:var(--spit-navy-dark);">Login</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Student Registration</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero Section ── -->
+  <section class="landing-hero" id="home">
+    <div class="landing-hero-container">
+      <div>
+        <div class="hero-badge">
+          <span>SPIT Campus Hostels</span> · Munshi Nagar, Andheri (W), Mumbai
+        </div>
+        <h1 class="hero-heading">Hostel life, organised.</h1>
+        <p class="hero-subtext">
+          Manage your hostel registration, room allocation, passes and everyday hostel requests in one place.
+        </p>
+        <div class="hero-actions">
+          <a href="register.html" class="btn btn-primary" style="padding:0.75rem 1.5rem;font-size:0.9375rem;">Student
+            Registration</a>
+          <a href="login.html" class="btn btn-secondary" style="padding:0.75rem 1.5rem;font-size:0.9375rem;">Login to
+            Portal</a>
+          <a href="register.html#status" class="btn btn-secondary"
+            style="padding:0.75rem 1.25rem;font-size:0.875rem;">Check Status</a>
+        </div>
+      </div>
+
+      <!-- Illustrative Preview Card -->
+      <div class="hero-preview-card">
+        <div class="preview-header">
+          <span class="preview-title">SPIT Hostel Ops — Allocation System</span>
+          <span class="badge badge-teal">Live Preview</span>
+        </div>
+        <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;">
+          Real-time room occupancy status visualization:
+        </p>
+        <div class="preview-rooms-mini">
+          <div class="mini-room empty">
+            <span style="display:block;font-size:0.6875rem;">Room A101</span>
+            🔴 Empty (0/2)
+          </div>
+          <div class="mini-room partial">
+            <span style="display:block;font-size:0.6875rem;">Room A102</span>
+            🟡 Partial (1/2)
+          </div>
+          <div class="mini-room full">
+            <span style="display:block;font-size:0.6875rem;">Room A103</span>
+            🟢 Full (2/2)
+          </div>
+        </div>
+        <div
+          style="background:var(--border-light);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.75rem;color:var(--text-secondary);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.25rem;">
+            <span>Digital Gate Pass Curfew</span>
+            <strong>10:00 PM Weekdays</strong>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span>Approved Applications</span>
+            <span class="badge badge-green" style="font-size:0.6875rem;">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Features Section ── -->
+  <section class="section-wrap" id="features">
+    <div class="section-header">
+      <h2 class="section-title">Essential Hostel Services</h2>
+      <p class="section-lead">
+        Designed strictly around authentic college requirements for students, faculty mentors, wardens, and
+        administration.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <!-- 1. Student Registration -->
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="23" y1="11" x2="17" y2="11" />
+          </svg>
+        </div>
+        <h3 class="feature-name">Student Registration</h3>
+        <p class="feature-desc">
+          Structured multi-section online application with college registration numbers, hostel requirements, mess
+          selections, and fee receipt upload.
+        </p>
+      </div>
+
+      <!-- 2. Room & Bed Allocation -->
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+        </div>
+        <h3 class="feature-name">Room and Bed Allocation</h3>
+        <p class="feature-desc">
+          Color-coded hostel visualization with red cards for empty rooms, yellow for partially filled rooms, and green
+          for fully occupied beds.
+        </p>
+      </div>
+
+      <!-- 3. Digital Passes -->
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <line x1="7" y1="8" x2="17" y2="8" />
+            <line x1="7" y1="12" x2="17" y2="12" />
+            <line x1="7" y1="16" x2="12" y2="16" />
+          </svg>
+        </div>
+        <h3 class="feature-name">Digital Passes</h3>
+        <p class="feature-desc">
+          Submit Day Outing, Night Out, and Home Visit pass requests online with warden approval workflows, QR
+          verification, and gate log tracking.
+        </p>
+      </div>
+
+      <!-- 4. Complaint Tracking -->
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          </svg>
+        </div>
+        <h3 class="feature-name">Complaint Tracking</h3>
+        <p class="feature-desc">
+          Log electrical, plumbing, carpentry, and WiFi maintenance requests. Track assignment to estate technicians and
+          resolution timelines.
+        </p>
+      </div>
+
+      <!-- 5. Mentor Support -->
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+        <h3 class="feature-name">Mentor Support</h3>
+        <p class="feature-desc">
+          Connect with your assigned SPIT faculty mentor. Request academic guidance sessions, review study routines, and
+          receive official recommendations.
+        </p>
+      </div>
+
+      <!-- 6. Hostel Announcements -->
+      <div class="feature-card">
+        <div class="feature-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+        </div>
+        <h3 class="feature-name">Hostel Announcements</h3>
+        <p class="feature-desc">
+          Receive official campus circulars, curfew updates, maintenance schedules, and mess committee notices directly
+          from the Chief Warden.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Hostel Information Section ── -->
+  <section class="section-wrap" id="hostel-info"
+    style="background:var(--spit-surface);border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);">
+    <div class="section-header">
+      <h2 class="section-title">Hostel Information & Facilities</h2>
+      <p class="section-lead">
+        Confirmed campus arrangements at Bharatiya Vidya Bhavan's S.P.I.T. Campus, Andheri West.
+      </p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-box">
+        <h3 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:0.5rem;">Verified Campus
+          Facilities</h3>
+        <p style="font-size:0.875rem;color:var(--text-secondary);">
+          Available to registered hostel residents across residential blocks:
+        </p>
+        <ul class="info-list">
+          <li class="info-item"><span class="info-dot"></span><span><strong>WiFi Connectivity:</strong> High-speed
+              campus-wide network access for academic work.</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Solar Water Heaters:</strong> Rooftop solar
+              water heating systems installed for hot water supply.</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Drinking Water:</strong> Multi-stage RO
+              filtration water coolers on every residential floor.</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Study Hall:</strong> Dedicated quiet study
+              rooms accessible for evening reference and exam preparation.</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Gated Security:</strong> 24x7 security
+              personnel and CCTV surveillance at campus and hostel access gates.</span></li>
+        </ul>
+      </div>
+
+      <div class="info-box">
+        <h3 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:0.5rem;">Gate Timings &
+          Curfew Policy</h3>
+        <p style="font-size:0.875rem;color:var(--text-secondary);">
+          Standard gate operation hours established by the hostel warden:
+        </p>
+        <ul class="info-list">
+          <li class="info-item"><span class="info-dot"></span><span><strong>Morning Gate Opening:</strong> 06:00 AM
+              daily</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Weekday Curfew:</strong> 10:00 PM (Monday to
+              Friday)</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Weekend Curfew:</strong> 10:30 PM (Saturday
+              and Sunday)</span></li>
+          <li class="info-item"><span class="info-dot"></span><span><strong>Night & Outstation Passes:</strong> Must be
+              requested through Hostel Ops at least 24 hours prior.</span></li>
+        </ul>
+
+        <div class="notice-callout">
+          <strong>Institutional Notice:</strong> Hostel capacity, availability and mess plans are managed directly by
+          the SPIT administration.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact Section ── -->
+  <section class="section-wrap" id="contact">
+    <div class="section-header">
+      <h2 class="section-title">Contact Administration</h2>
+      <p class="section-lead">For hostel admission inquiries and official administrative correspondence.</p>
+    </div>
+
+    <div
+      style="max-width:720px;margin:0 auto;background:var(--spit-surface);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:2rem;">
+      <h3 style="font-size:1.125rem;font-weight:700;color:var(--spit-navy);margin-bottom:1rem;">
+        Bharatiya Vidya Bhavan's Sardar Patel Institute of Technology
+      </h3>
+      <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:0.75rem;">
+        Munshi Nagar, Andheri (West), Mumbai – 400 058, Maharashtra, India.
+      </p>
+      <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:0.5rem;">
+        <strong>Hostel Office:</strong> hostel@spit.ac.in · (022) 2670 7440
+      </p>
+      <p style="font-size:0.875rem;color:var(--text-secondary);">
+        <strong>Office Hours:</strong> Monday – Friday: 10:00 AM to 05:00 PM
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Footer (Required: "Made with ♥ by Sakshi, Rashi & Aishwarya") ── -->
+  <footer class="spit-footer">
+    <div class="spit-footer-content">
+      <p class="spit-footer-credit">
+        Made with ♥ by Sakshi, Rashi &amp; Aishwarya
+      </p>
+      <div class="spit-footer-links">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#hostel-info">Hostel Information</a>
+        <a href="#contact">Contact</a>
+        <a href="https://www.spit.ac.in/" target="_blank" rel="noopener">Official SPIT Website</a>
+      </div>
+      <p class="spit-footer-disclaimer">
+        Bharatiya Vidya Bhavan's Sardar Patel Institute of Technology (SPIT), Munshi Nagar, Andheri (West), Mumbai – 400
+        058.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Theme toggle script -->
+  <script>
+    const themeBtn = document.getElementById('themeToggleBtn');
+    themeBtn?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      document.documentElement.classList.toggle('light', !isDark);
+      localStorage.setItem('spit_theme', isDark ? 'dark' : 'light');
+    });
+
+    // Landing page mobile menu toggle
+    let _lastLandingNavToggle = 0;
+    window.toggleLandingNav = function (e) {
+      if (e) {
+        if (e.stopPropagation) e.stopPropagation();
+      }
+      const now = Date.now();
+      if (now - _lastLandingNavToggle < 200) return;
+      _lastLandingNavToggle = now;
+
+      const navLinks = document.getElementById('landingNavLinks');
+      const navToggle = document.getElementById('landingNavToggle');
+      if (navLinks) {
+        const isOpen = navLinks.classList.toggle('open');
+        navToggle?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      }
+    };
+
+    // Close when clicking any nav link
+    document.querySelectorAll('#landingNavLinks .spit-nav-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        document.getElementById('landingNavLinks')?.classList.remove('open');
+        document.getElementById('landingNavToggle')?.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      const navLinks = document.getElementById('landingNavLinks');
+      if (navLinks && navLinks.classList.contains('open')) {
+        if (!e.target.closest('.spit-nav')) {
+          navLinks.classList.remove('open');
+          document.getElementById('landingNavToggle')?.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+  </script>
+
+  <script src="js/pwa-installer.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Login — Hostel Ops | SPIT Mumbai</title>
+  <meta name="description" content="Sign in to SPIT Hostel Ops — role-based portal for Students, Senior Student Mentors, Wardens, and Administrators." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/app_icon_192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <script>
+    (function() {
+      var t = localStorage.getItem('spit_theme') || 'light';
+      if (t === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/spit.css" />
+  <style>
+    .login-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .login-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 440px;
+      background: var(--spit-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .login-box-header {
+      background: var(--spit-navy-dark);
+      color: #ffffff;
+      padding: 1.75rem 2rem 1.25rem;
+      border-bottom: 3px solid var(--spit-maroon);
+      text-align: center;
+    }
+    .login-box-body {
+      padding: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.375rem;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.6875rem 0.875rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--spit-surface);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      outline: none;
+      transition: var(--transition);
+    }
+    .form-control:focus {
+      border-color: var(--spit-teal);
+      box-shadow: 0 0 0 3px var(--spit-teal-light);
+    }
+    .demo-accounts-tray {
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+    .demo-tray-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+    .demo-grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .demo-pill-btn {
+      padding: 0.5rem 0.65rem;
+      background: var(--spit-surface-hover);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: var(--transition);
+      color: var(--text-primary);
+    }
+    .demo-pill-btn:hover {
+      border-color: var(--spit-teal);
+      background: var(--spit-teal-light);
+    }
+    .demo-role-tag {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--spit-teal);
+      margin-bottom: 0.125rem;
+    }
+    .btn-install-app {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.75rem;
+      background: linear-gradient(135deg, var(--spit-teal), #0d2149);
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(13, 122, 114, 0.3);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .btn-install-app:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(13, 122, 114, 0.45);
+    }
+    @media (max-width: 600px) {
+      .login-main {
+        padding: 1.5rem 0.85rem;
+      }
+      .login-box-body {
+        padding: 1.25rem 1rem;
+      }
+      .login-box-header {
+        padding: 1.25rem 1rem 1rem;
+      }
+      .spit-text-block .spit-tagline {
+        display: none;
+      }
+      .spit-text-block .spit-parent-name {
+        font-size: 0.65rem;
+      }
+      .spit-text-block .spit-inst-name {
+        font-size: 0.85rem;
+      }
+      .demo-grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .btn-install-app span.install-text-long {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body class="login-wrapper">
+
+  <!-- Institutional Header Band -->
+  <header class="spit-header-band">
+    <div class="spit-brand-row">
+      <a href="index.html" class="spit-logo-lockup">
+        <img src="assets/spit_logo.png" alt="SPIT Mumbai Logo" class="spit-logo-img" />
+        <div class="spit-text-block">
+          <span class="spit-parent-name">Bharatiya Vidya Bhavan's</span>
+          <span class="spit-inst-name">Sardar Patel Institute of Technology</span>
+          <span class="spit-tagline">Autonomous Institute · Affiliated to University of Mumbai</span>
+        </div>
+      </a>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <button class="btn-install-app" id="pwaInstallBtn" onclick="triggerPwaInstall()" title="Install SPIT Hostel Ops as an App">
+          <span>📲</span>
+          <span class="install-text-long">Install App</span>
+        </button>
+        <span class="spit-app-tag">Portal Login</span>
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme" title="Toggle Dark/Light Mode" style="background:var(--border-color);color:var(--text-primary);">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="login-main">
+    <div class="login-box">
+      <div class="login-box-header">
+        <h1 style="font-size:1.25rem;font-weight:700;margin-bottom:0.25rem;">Hostel Ops Sign In</h1>
+        <p style="font-size:0.8125rem;color:#cbd5e1;">Select your institutional role to continue</p>
+      </div>
+
+      <div class="login-box-body">
+        <form id="loginForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Institutional Email Address</label>
+            <input type="email" id="loginEmail" class="form-control" placeholder="user@spit.ac.in" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required />
+          </div>
+
+          <div id="loginAlertBox" class="card" style="display:none;background:var(--status-red-bg);border-color:var(--status-red-border);padding:0.75rem 1rem;font-size:0.8125rem;color:var(--status-red);margin-bottom:1.25rem;"></div>
+
+          <button type="submit" class="btn btn-primary" id="loginSubmitBtn" style="width:100%;padding:0.6875rem;">
+            Sign In to Portal
+          </button>
+        </form>
+
+        <!-- 4 Role Demo Accounts Tray -->
+        <div class="demo-accounts-tray">
+          <p class="demo-tray-title">Demo Credentials (All 4 Institutional Roles)</p>
+          <div class="demo-grid-4">
+            <button class="demo-pill-btn" onclick="quickFill('student@spit.ac.in', 'Student@123')">
+              <span class="demo-role-tag">🎓 Student</span>
+              <div>student@spit.ac.in</div>
+            </button>
+            <button class="demo-pill-btn" onclick="quickFill('mentor@spit.ac.in', 'Mentor@123')">
+              <span class="demo-role-tag">🧭 Senior Mentor</span>
+              <div>mentor@spit.ac.in</div>
+            </button>
+            <button class="demo-pill-btn" onclick="quickFill('warden@spit.ac.in', 'Warden@123')">
+              <span class="demo-role-tag">🛡️ Warden</span>
+              <div>warden@spit.ac.in</div>
+            </button>
+            <button class="demo-pill-btn" onclick="quickFill('admin@spit.ac.in', 'Admin@123')">
+              <span class="demo-role-tag">⚙️ Admin</span>
+              <div>admin@spit.ac.in</div>
+            </button>
+          </div>
+          <p style="font-size:0.6875rem;color:var(--text-muted);text-align:center;margin-top:0.75rem;">
+            Click any role pill above to auto-populate credentials for instant testing.
+          </p>
+        </div>
+
+        <div style="margin-top:1.5rem;text-align:center;font-size:0.8125rem;color:var(--text-secondary);">
+          New student resident? <a href="register.html" style="font-weight:600;">Register for Hostel Admission</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer with required credit -->
+  <footer class="spit-footer" style="margin-top:auto;">
+    <div class="spit-footer-content">
+      <p class="spit-footer-credit">
+        Made with ♥ by Sakshi, Rashi &amp; Aishwarya
+      </p>
+      <div class="spit-footer-links">
+        <a href="index.html">Home</a>
+        <a href="register.html">Student Registration</a>
+        <a href="register.html#status">Check Application Status</a>
+      </div>
+      <p class="spit-footer-disclaimer">
+        Bharatiya Vidya Bhavan's Sardar Patel Institute of Technology (SPIT), Munshi Nagar, Andheri (West), Mumbai – 400 058.
+      </p>
+    </div>
+  </footer>
+
+  <script src="js/pwa-installer.js"></script>
+  <script src="js/api.js"></script>
+  <script>
+    // Theme toggle
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      document.documentElement.classList.toggle('light', !isDark);
+      localStorage.setItem('spit_theme', isDark ? 'dark' : 'light');
+    });
+
+    const emailInput = document.getElementById('loginEmail');
+    const passwordInput = document.getElementById('loginPassword');
+    const alertBox = document.getElementById('loginAlertBox');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+
+    // Quick fill helper for demo pills
+    function quickFill(email, pw) {
+      emailInput.value = email;
+      passwordInput.value = pw;
+      alertBox.style.display = 'none';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.style.display = 'none';
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (!email || !password) {
+        alertBox.textContent = 'Please provide both institutional email and password.';
+        alertBox.style.display = 'block';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying credentials…';
+
+      try {
+        const apiBase = (window.location.port && window.location.port !== '5000' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+          ? 'http://localhost:5000/api'
+          : '/api';
+        const res = await fetch(`${apiBase}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          const detail = (data.error && data.error !== data.message) ? `${data.message} (${data.error})` : data.message;
+          throw new Error(detail || 'Authentication failed. Please verify credentials.');
+        }
+
+        // Store credentials in sessionStorage (per-tab, supports multiple logins)
+        sessionStorage.setItem('hostel_token', data.token);
+        sessionStorage.setItem('hostel_user', JSON.stringify(data.user));
+
+        // Redirect to dashboard
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        alertBox.textContent = err.message;
+        alertBox.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign In to Portal';
+      }
+    });
+  </script>
+</body>
+</html>
