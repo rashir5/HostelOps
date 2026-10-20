@@ -227,38 +227,33 @@ npx serve frontend
 
 ## 👥 Project Team & Contributors
 
-This project was built by a collaborative team of three developers dedicated to modernizing hostel operations for **Sardar Patel Institute of Technology (SPIT)**:
+This project was collaboratively built by:
 
 <table align="center">
   <tr>
     <td align="center" width="33%">
       <a href="https://github.com/sakshihonamane5-design">
-        <img src="https://avatars.githubusercontent.com/u/285596936?v=4" width="100px;" alt="Sakshi Honamane" style="border-radius: 50%;" /><br />
-        <sub><b>Sakshi Honamane</b></sub>
-      </a><br />
-      <sub>UI/UX Architecture &amp; Full-Stack Engineering</sub><br />
-      <a href="https://github.com/sakshihonamane5-design">@sakshihonamane5-design</a>
+        <img src="https://avatars.githubusercontent.com/u/285596936?v=4" width="100px;" alt="sakshihonamane5-design" style="border-radius: 50%;" /><br />
+        <br />
+        <b>@sakshihonamane5-design</b>
+      </a>
     </td>
     <td align="center" width="33%">
-      <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" width="100px;" alt="Team Contributor 2" style="border-radius: 50%;" /><br />
-        <sub><b>Team Contributor 2</b></sub>
-      </a><br />
-      <sub>Backend Architecture &amp; Database Optimization</sub><br />
-      <sub><i>Contributor Profile Slot</i></sub>
+      <a href="https://github.com/rashir5">
+        <img src="https://avatars.githubusercontent.com/u/231660415?v=4" width="100px;" alt="rashir5" style="border-radius: 50%;" /><br />
+        <br />
+        <b>@rashir5</b>
+      </a>
     </td>
     <td align="center" width="33%">
-      <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/9919?s=200&v=4" width="100px;" alt="Team Contributor 3" style="border-radius: 50%;" /><br />
-        <sub><b>Team Contributor 3</b></sub>
-      </a><br />
-      <sub>Quality Assurance, Security &amp; Testing</sub><br />
-      <sub><i>Contributor Profile Slot</i></sub>
+      <a href="https://github.com/aishwarya2927">
+        <img src="https://avatars.githubusercontent.com/u/195116024?v=4" width="100px;" alt="aishwarya2927" style="border-radius: 50%;" /><br />
+        <br />
+        <b>@aishwarya2927</b>
+      </a>
     </td>
   </tr>
 </table>
-
-> 💡 *Note: If you are one of the two additional team members, please share your GitHub profile handle to link your card directly.*
 
 ---
 
